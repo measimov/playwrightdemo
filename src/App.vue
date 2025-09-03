@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" data-testid="app-container">
     <el-container>
       <el-header class="header">
         <h1>Vue + TS + Vite + Element Plus + ECharts Demo</h1>
