@@ -293,6 +293,103 @@ test.describe('Playwright 功能演示 - 元素定位方法', () => {
         path: 'test-results/chart-section-screenshot.png' 
       });
     });
+
+    test('视觉回归测试 - 截图对比', async ({ page }) => {
+      // 等待页面完全加载
+      await page.waitForTimeout(2000);
+      
+      // 截取当前页面作为测试图片
+      const currentScreenshot = await page.screenshot({ 
+        fullPage: true 
+      });
+      
+      // 与基线图片进行对比
+      // 注意：首次运行时会创建基线图片，后续运行会进行对比
+      await expect(currentScreenshot).toMatchSnapshot('full-page-baseline.png');
+      
+      console.log('✅ 视觉回归测试通过！');
+      console.log('💡 首次运行会创建基线图片，后续运行会进行对比');
+    });
+
+    test('组件视觉回归测试', async ({ page }) => {
+      // 等待组件加载
+      await page.waitForTimeout(1000);
+      
+      // 截取头部组件
+      const header = page.locator('.header');
+      const headerScreenshot = await header.screenshot();
+      await expect(headerScreenshot).toMatchSnapshot('header-baseline.png');
+      
+      // 截取控制面板
+      const controlPanel = page.locator('.control-panel');
+      const controlPanelScreenshot = await controlPanel.screenshot();
+      await expect(controlPanelScreenshot).toMatchSnapshot('control-panel-baseline.png');
+      
+      // 截取统计卡片
+      const summaryCards = page.locator('.summary-card');
+      for (let i = 0; i < 4; i++) {
+        const cardScreenshot = await summaryCards.nth(i).screenshot();
+        await expect(cardScreenshot).toMatchSnapshot(`summary-card-${i + 1}-baseline.png`);
+      }
+      
+      console.log('✅ 组件视觉回归测试通过！');
+    });
+
+    test('响应式视觉回归测试', async ({ page }) => {
+      // 测试不同视口下的视觉一致性
+      
+      // 桌面端
+      await page.setViewportSize({ width: 1920, height: 1080 });
+      await page.waitForTimeout(500);
+      const desktopScreenshot = await page.screenshot({ fullPage: true });
+      await expect(desktopScreenshot).toMatchSnapshot('desktop-1920x1080-baseline.png');
+      
+      // 平板端
+      await page.setViewportSize({ width: 768, height: 1024 });
+      await page.waitForTimeout(500);
+      const tabletScreenshot = await page.screenshot({ fullPage: true });
+      await expect(tabletScreenshot).toMatchSnapshot('tablet-768x1024-baseline.png');
+      
+      // 移动端
+      await page.setViewportSize({ width: 375, height: 667 });
+      await page.waitForTimeout(500);
+      const mobileScreenshot = await page.screenshot({ fullPage: true });
+      await expect(mobileScreenshot).toMatchSnapshot('mobile-375x667-baseline.png');
+      
+      // 恢复桌面端
+      await page.setViewportSize({ width: 1280, height: 720 });
+      
+      console.log('✅ 响应式视觉回归测试通过！');
+    });
+
+    test('交互状态视觉回归测试', async ({ page }) => {
+      // 等待页面加载
+      await page.waitForTimeout(1000);
+      
+      // 截取默认状态
+      const defaultScreenshot = await page.screenshot({ fullPage: true });
+      await expect(defaultScreenshot).toMatchSnapshot('default-state-baseline.png');
+      
+      // 点击下拉选择器
+      const dataTypeSelect = page.locator('.el-form-item:has-text("数据类型") .el-select');
+      await dataTypeSelect.click();
+      await page.waitForTimeout(500);
+      
+      // 截取展开状态
+      const expandedScreenshot = await page.screenshot({ fullPage: true });
+      await expect(expandedScreenshot).toMatchSnapshot('dropdown-expanded-baseline.png');
+      
+      // 选择选项
+      const userOption = page.locator('.el-select-dropdown .el-select-dropdown__item:has-text("用户数据")');
+      await userOption.click();
+      await page.waitForTimeout(500);
+      
+      // 截取选择后状态
+      const selectedScreenshot = await page.screenshot({ fullPage: true });
+      await expect(selectedScreenshot).toMatchSnapshot('dropdown-selected-baseline.png');
+      
+      console.log('✅ 交互状态视觉回归测试通过！');
+    });
   });
 
   test.describe('6. 多浏览器和视口测试', () => {
