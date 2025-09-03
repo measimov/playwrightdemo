@@ -5,18 +5,25 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report",
+    "test:install": "playwright install"
   },
   "dependencies": {
-    "vue": "^3.3.4",
-    "element-plus": "^2.3.8",
     "echarts": "^5.4.3",
+    "element-plus": "^2.3.8",
+    "vue": "^3.3.4",
     "vue-echarts": "^6.6.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@vitejs/plugin-vue": "^4.2.3",
     "typescript": "^5.0.2",
-    "vue-tsc": "^1.4.2",
-    "vite": "^4.4.5"
+    "vite": "^4.4.5",
+    "vue-tsc": "^1.4.2"
   }
 }
